@@ -1,0 +1,128 @@
+name: Build
+
+on:
+  push:
+    branches: [ "main" ]
+
+env:
+  TASK_EXECUTOR_NAME: task-executor
+  TASK_MICROSERVICE_NAME: task-microservice
+  FRONTEND_NAME: frontend
+  TASK_EXECUTOR_IMAGE: ghcr.io/${{ github.repository_owner }}/task-executor:latest
+  TASK_MICROSERVICE_IMAGE: ghcr.io/${{ github.repository_owner }}/task-microservice:latest
+  FRONTEND_IMAGE: ghcr.io/${{ github.repository_owner }}/frontend:latest
+
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      task-executor: ${{ steps.changes.outputs.task-executor }}
+      task-microservice: ${{ steps.changes.outputs.task-microservice }}
+      frontend: ${{ steps.changes.outputs.frontend }}
+    steps:
+    - uses: actions/checkout@v3
+    - uses: dorny/paths-filter@v2
+      id: changes
+      with:
+        filters: |
+          task-executor:
+            - 'task-executor/**'
+          task-microservice:
+            - 'task-microservice/**'
+          frontend:
+            - 'frontend/**' 
+            
+
+  build-task-executor:
+    needs: changes
+    if: ${{ needs.changes.outputs.task-executor == 'true' }}
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v1
+      with:
+          registry: ghcr.io
+          username: ${{github.actor}}
+          password: ${{secrets.GITHUB_TOKEN}}
+    - name: Setup Buildx
+      uses: docker/setup-buildx-action@v2
+      with:
+        driver-opts: |
+          image=moby/buildkit:v0.11.2
+    - name: Build Task-executor
+      uses: docker/build-push-action@v4
+      with:
+        context: ./
+        file: ./${{env.TASK_EXECUTOR_NAME}}/Dockerfile
+        push: true
+        tags: ${{env.TASK_EXECUTOR_IMAGE}}
+        cache-from: type=gha,scope=${{env.TASK_EXECUTOR_NAME}}
+        cache-to: type=gha,mode=max,scope=${{env.TASK_EXECUTOR_NAME}}
+    
+    
+  build-task-microservice:
+    needs: changes
+    if: ${{ needs.changes.outputs.task-microservice == 'true' }}
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v1
+      with:
+          registry: ghcr.io
+          username: ${{github.actor}}
+          password: ${{secrets.GITHUB_TOKEN}}
+    - name: Setup Buildx
+      uses: docker/setup-buildx-action@v2
+      with:
+        driver-opts: |
+          image=moby/buildkit:v0.11.2
+    - name: Build Task-microservice
+      uses: docker/build-push-action@v4
+      with:
+        context: ./
+        file: ./${{env.TASK_MICROSERVICE_NAME}}/Dockerfile
+        push: true
+        tags: ${{env.TASK_MICROSERVICE_IMAGE}}
+        cache-from: type=gha,scope=${{env.TASK_MICROSERVICE_NAME}}
+        cache-to: type=gha,mode=max,scope=${{env.TASK_MICROSERVICE_NAME}}
+
+  build-frontend:
+      needs: changes
+      if: ${{ needs.changes.outputs.frontend == 'true' }}
+      runs-on: ubuntu-latest
+      permissions:
+        packages: write
+      steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+            registry: ghcr.io
+            username: ${{github.actor}}
+            password: ${{secrets.GITHUB_TOKEN}}
+      - name: Setup Buildx
+        uses: docker/setup-buildx-action@v2
+        with:
+         driver-opts: |
+          image=moby/buildkit:v0.11.2
+      - name: Build frontend
+        uses: docker/build-push-action@v4
+        with:
+          context: ./${{env.FRONTEND_NAME}}
+          push: true
+          tags: ${{env.FRONTEND_IMAGE}}
+          cache-from: type=gha,scope=${{env.FRONTEND_NAME}}
+          cache-to: type=gha,mode=max,scope=${{env.FRONTEND_NAME}}
+          
+ 
+      
