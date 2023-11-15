@@ -1,6 +1,6 @@
 <template>
   <div >
-    <app-bear-logo :is-loader="true"/>
+
   </div>
 
 
@@ -9,11 +9,9 @@
 <script>
 
 
-import AppBearLogo from "@/components/ui/AppLogo.vue";
 
 export default {
   name: "AppLoader",
-  components: {AppBearLogo}
 }
 </script>
 

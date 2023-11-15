@@ -1,12 +1,10 @@
 <template>
   <header :class="{transparent : isMainPage}">
     <div id="logo" @click="$router.push({name: 'main'})">
-      <app-bear-logo :is-main-page="isMainPage"/>
-      <h1 :class="{'white' : isMainPage}"><span :class="{'white' : isMainPage}">Beer</span>code</h1>
+      <h1 :class="{'white' : isMainPage}">Codest</h1>
     </div>
     <nav id="menu">
       <ul :class="{'white' : isMainPage}">
-<!--        <li><a href="/chat">Чат</a></li>-->
         <li @click="$router.push({name: 'tasks'})"><a>Задачи</a></li>
       </ul>
     </nav>
@@ -26,16 +24,11 @@
 <script setup>
 
 
-import AppBearLogo from "@/components/ui/AppLogo.vue";
-import {useRoute, useRouter} from "vue-router";
+import {useRoute} from "vue-router";
 import {computed, ref} from "vue";
 
 const route = useRoute();
 const isMenuOpened = ref(false);
-const showLogin = () => {
-  isMenuOpened.value = false
-
-}
 
 const isMainPage = computed(() => route.name === 'main');
 
