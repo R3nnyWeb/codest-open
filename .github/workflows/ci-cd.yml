@@ -8,9 +8,9 @@ env:
   TASK_EXECUTOR_NAME: task-executor
   TASK_MICROSERVICE_NAME: task-microservice
   FRONTEND_NAME: frontend
-  TASK_EXECUTOR_IMAGE: ghcr.io/${{ github.repository_owner }}/task-executor:latest
-  TASK_MICROSERVICE_IMAGE: ghcr.io/${{ github.repository_owner }}/task-microservice:latest
-  FRONTEND_IMAGE: ghcr.io/${{ github.repository_owner }}/frontend:latest
+  TASK_EXECUTOR_IMAGE: ghcr.io/r3nnyweb/task-executor:latest
+  TASK_MICROSERVICE_IMAGE: ghcr.io/r3nnyweb/task-microservice:latest
+  FRONTEND_IMAGE: ghcr.io/r3nnyweb/frontend:latest
 
 
 jobs:
