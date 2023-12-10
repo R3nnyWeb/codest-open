@@ -1,13 +1,8 @@
 <template>
-  <div >
-
-  </div>
-
-
+    <img id="loader" src="@/assets/loader.gif" alt="loading">
 </template>
 
 <script>
-
 
 
 export default {
@@ -16,5 +11,8 @@ export default {
 </script>
 
 <style scoped>
-
+#loader{
+  max-width: 100%;
+  max-height: 100%;
+}
 </style>
